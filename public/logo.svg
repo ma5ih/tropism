@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 90" role="img" aria-labelledby="title">
-  <title id="title">تروپیسم</title>
-  <g fill="none" stroke="#6a804a" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M31 58C28 42 33 26 48 14" stroke-width="2.8"/>
-    <path d="M40 34C24 35 16 26 18 15 31 16 40 23 40 34Z" fill="#6a804a" stroke-width="1.2"/>
-    <path d="M43 28C45 13 56 7 68 10 66 23 57 30 43 28Z" fill="#9b76b4" stroke-width="1.2"/>
-    <path d="M33 47C19 48 10 41 9 30 22 30 31 36 33 47Z" fill="#a9b795" stroke-width="1.2"/>
-    <path d="M32 58C39 52 48 50 58 51" stroke-width="2"/>
-    <circle cx="31" cy="62" r="3.2" fill="#9b76b4" stroke="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 84" role="img" aria-labelledby="title">
+  <title id="title">tropism — Space to grow</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 58V35Q17 29 22 24L43 7Q49 2 55 7L77 24Q82 29 82 35V59Q82 68 73 68H26Q17 68 17 58Z" stroke="#6a804a" stroke-width="3"/>
+    <path d="M49 58C43 48 44 37 53 27" stroke="#6a804a" stroke-width="2.5"/>
+    <path d="M50 42C35 42 29 32 31 22C43 23 50 31 50 42Z" fill="#6a804a" stroke="#6a804a" stroke-width="1.1"/>
+    <path d="M51 34C52 21 62 14 73 17C71 28 63 35 51 34Z" fill="#a9b795" stroke="#6a804a" stroke-width="1.1"/>
+    <path d="M49 57C57 50 65 51 69 57L67 65H51Z" fill="#9b76b4" stroke="#9b76b4" stroke-width="1.2"/>
+    <path d="M60 56V46" stroke="#6a804a" stroke-width="1.8"/>
   </g>
-  <text x="248" y="42" text-anchor="end" fill="#43543a" font-family="Tahoma, Arial, sans-serif" font-size="30" font-weight="600">تروپیسم</text>
-  <text x="248" y="64" text-anchor="end" fill="#8a8e81" font-family="Tahoma, Arial, sans-serif" font-size="10" letter-spacing="2">SPACE TO GROW</text>
+  <text x="288" y="47" text-anchor="end" fill="#43543a" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="600" letter-spacing="-1.2">tropism</text>
+  <text x="287" y="65" text-anchor="end" fill="#8a8e81" font-family="Arial, Helvetica, sans-serif" font-size="8" letter-spacing="2.7">SPACE TO GROW</text>
 </svg>
