@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft, ArrowUpLeft, Baby, Brain, Check, ChevronDown,
@@ -34,7 +34,7 @@ const faqs = [
   { q: 'چطور از محرمانه بودن اطلاعاتم مطمئن شوم؟', a: 'حریم خصوصی یکی از اصول اساسی همراهی درمانی است. پیش از انتشار نسخه نهایی، سیاست محرمانگی و روش نگهداری داده‌ها باید به‌طور روشن در سایت درج شود.' },
 ];
 
-function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
