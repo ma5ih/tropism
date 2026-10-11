@@ -1,187 +1,377 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
-  ArrowLeft, ArrowUpLeft, CalendarDays, Check, ChevronDown, Clock3,
-  HeartHandshake, Leaf, Menu, MessageCircle, ShieldCheck, Sparkles,
-  Video, X, Brain, Flower2, MoveLeft
+  ArrowLeft, ArrowUpLeft, Baby, Brain, Check, ChevronDown,
+  Clock3, Flower2, HeartHandshake, Instagram, Leaf, Menu, MessageCircle,
+  Minus, Plus, ShieldCheck, Sparkles, Sprout, UsersRound, X
 } from 'lucide-react';
 
 const services = [
-  { id: 'individual', icon: Brain, title: 'تراپی فردی', subtitle: 'برای رابطه‌ای عمیق‌تر با خودت', description: 'احساساتت را بهتر بشناس، الگوهایت را کشف کن و با آگاهی بیشتری تصمیم بگیر.', tag: 'برای خودت', tone: 'sage' },
-  { id: 'relationship', icon: HeartHandshake, title: 'تراپی رابطه', subtitle: 'برای شنیدن و شنیده‌شدن', description: 'فضایی امن‌تر برای گفت‌وگو، درک تفاوت‌ها و دیدن رابطه از زاویه‌ای تازه.', tag: 'برای رابطه', tone: 'lilac' },
-  { id: 'youth', icon: Flower2, title: 'کودک و نوجوان', subtitle: 'برای رشد در فضای امن', description: 'همراهی متناسب با دنیای کودکان و نوجوانان و نیازهای خانواده.', tag: 'برای خانواده', tone: 'cream' },
+  { id: 'individual', icon: Brain, title: 'تراپی فردی', subtitle: 'رابطه‌ای عمیق‌تر با خودت', description: 'برای شناخت احساسات، دیدن الگوها و پیدا کردن راهی که بیشتر شبیه خودت باشد.', tone: 'sage', number: '۰۱' },
+  { id: 'relationship', icon: HeartHandshake, title: 'تراپی رابطه', subtitle: 'برای شنیدن و شنیده‌شدن', description: 'فضایی امن برای گفت‌وگو، درک تفاوت‌ها و ساختن رابطه‌ای آگاهانه‌تر.', tone: 'lilac', number: '۰۲' },
+  { id: 'family', icon: UsersRound, title: 'مشاوره خانواده', subtitle: 'برای نزدیک‌تر شدن', description: 'برای وقت‌هایی که خانواده به گفت‌وگویی تازه و نگاهی مهربان‌تر نیاز دارد.', tone: 'peach', number: '۰۳' },
+  { id: 'youth', icon: Baby, title: 'کودک و نوجوان', subtitle: 'برای رشد در فضای امن', description: 'همراهی متناسب با دنیای کودکان و نوجوانان، در کنار خانواده.', tone: 'lilac', number: '۰۴' },
+  { id: 'education', icon: Flower2, title: 'کارگاه و آموزش', subtitle: 'یادگیری برای زندگی', description: 'تمرین‌ها و آگاهی‌هایی برای شناخت بهتر خود و ساختن عادت‌های سالم‌تر.', tone: 'sage', number: '۰۵' },
+];
+
+const articles = [
+  { category: 'رابطه با خود', title: 'چطور با احساسات سخت مهربان‌تر باشیم؟', excerpt: 'قرار نیست همیشه حالمان خوب باشد؛ گاهی فقط باید به آنچه می‌گذرد، جا بدهیم.', time: '۶ دقیقه مطالعه', image: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=800&q=85', shape: 'article-photo-one' },
+  { category: 'روان‌شناسی', title: 'قدرت عادت‌های کوچک در روزهای شلوغ', excerpt: 'تغییرهای پایدار همیشه با قدم‌های بزرگ شروع نمی‌شوند؛ گاهی یک مکث کافی است.', time: '۴ دقیقه مطالعه', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=85', shape: 'article-photo-two' },
+  { category: 'آرامش ذهن', title: 'وقتی ذهن شلوغ است، از کجا شروع کنیم؟', excerpt: 'چند راه ساده برای برگشتن به لحظه و شنیدن صدای خودمان.', time: '۵ دقیقه مطالعه', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85', shape: 'article-photo-three' },
+];
+
+const steps = [
+  { n: '۱', title: 'از نیازت بگو', text: 'لازم نیست از همین ابتدا همه‌چیز را بدانی؛ از چیزی که امروز درگیرش هستی شروع کن.' },
+  { n: '۲', title: 'همراه مناسب را پیدا کن', text: 'حوزه تخصصی، رویکرد و شیوه کار درمانگر را ببین و با آرامش انتخاب کن.' },
+  { n: '۳', title: 'زمانت را انتخاب کن', text: 'جزئیات جلسه را مرور کن و برای اولین قدم، زمانی متناسب با زندگی‌ات بردار.' },
 ];
 
 const faqs = [
-  { q: 'از کجا بفهمم کدام درمانگر برای من مناسب است؟', a: 'می‌توانی از حوزه‌های تخصصی، تجربه و رویکرد هر درمانگر شروع کنی. در نسخهٔ نهایی تروپیسم، مسیر راهنمای انتخاب درمانگر بر اساس نیازت شخصی‌سازی می‌شود.' },
-  { q: 'جلسه‌ها به چه شکلی برگزار می‌شوند؟', a: 'جلسه‌ها می‌توانند بر اساس خدمت انتخابی به‌صورت آنلاین یا حضوری تعریف شوند. جزئیات دقیق هر خدمت پیش از رزرو نمایش داده خواهد شد.' },
-  { q: 'آیا اطلاعات من محرمانه می‌ماند؟', a: 'حریم خصوصی باید از اصول پایهٔ تروپیسم باشد. پیش از آغاز رزرو واقعی، سیاست محرمانگی و شیوهٔ نگهداری اطلاعات به‌صورت شفاف منتشر می‌شود.' },
-  { q: 'آیا این صفحه امکان رزرو واقعی دارد؟', a: 'این نسخه نمایشی رابط کاربری است. برای فعال‌کردن رزرو باید سرویس زمان‌بندی، پایگاه داده و ارسال تأییدیه به آن متصل شود.' },
+  { q: 'اگر ندانم به چه نوع مشاوره‌ای نیاز دارم چه؟', a: 'کاملاً طبیعی است. از راهنمای انتخاب شروع کن یا برای آشنایی اولیه با ما در ارتباط باش؛ قرار نیست پیش از شروع، همه جواب‌ها را داشته باشی.' },
+  { q: 'جلسه‌ها آنلاین برگزار می‌شوند؟', a: 'در این طرح، امکان نمایش جلسه‌های آنلاین و حضوری در نظر گرفته شده است. شیوه و زمان واقعی هر جلسه باید هنگام اتصال سامانه رزرو توسط تیم تروپیسم نهایی شود.' },
+  { q: 'چطور از محرمانه بودن اطلاعاتم مطمئن شوم؟', a: 'حریم خصوصی یکی از اصول اساسی همراهی درمانی است. پیش از انتشار نسخه نهایی، سیاست محرمانگی و روش نگهداری داده‌ها باید به‌طور روشن در سایت درج شود.' },
 ];
 
-const approaches = [
-  { icon: MessageCircle, title: 'بدون قضاوت', text: 'جایی برای گفتن آنچه واقعاً حس می‌کنی.' },
-  { icon: ShieldCheck, title: 'با احساس امنیت', text: 'مرزها و نیازهایت با احترام شنیده می‌شوند.' },
-  { icon: Sparkles, title: 'با قدم‌های کوچک', text: 'تغییر، لازم نیست یک‌باره اتفاق بیفتد.' },
-];
+function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.div
+      className={className}
+      initial={reduced ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.14 }}
+      transition={{ duration: reduced ? 0 : 0.72, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-export default function Home() {
+function BrandMark({ light = false }: { light?: boolean }) {
+  return (
+    <a className={'brand-mark ' + (light ? 'brand-mark-light' : '')} href="#home" aria-label="تروپیسم، صفحه اصلی">
+      <img src="/logo.svg" alt="تروپیسم" />
+    </a>
+  );
+}
+
+export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingSent, setBookingSent] = useState(false);
   const [selectedService, setSelectedService] = useState('تراپی فردی');
-  const [submitted, setSubmitted] = useState(false);
-  const reduceMotion = useReducedMotion();
-
-  const scrollTo = (id: string) => {
-    setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
-  };
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const reduced = useReducedMotion();
 
   const openBooking = (service?: string) => {
     if (service) setSelectedService(service);
-    setSubmitted(false);
+    setBookingSent(false);
     setBookingOpen(true);
+    setMenuOpen(false);
   };
 
+  const handleBooking = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setBookingSent(true);
+  };
+
+  const navItems = [
+    ['خانه', '#home'], ['خدمات', '#services'], ['راهنمای شروع', '#guide'],
+    ['مجله', '#journal'], ['درباره ما', '#about'],
+  ];
+
   return (
-    <main id="top">
+    <main id="home" className="site-shell">
       <div className="announcement">
-        <span className="announcement-dot" />
-        <span>برای حالِ بهتر، لازم نیست همه‌چیز را به‌تنهایی حل کنی.</span>
-        <button onClick={() => scrollTo('approach')} className="announcement-link">با تروپیسم آشنا شو <ArrowLeft size={14} /></button>
+        <span className="announcement-spark"><Sparkles size={13} /></span>
+        <span>قرار نیست همه‌چیز را یک‌روزه حل کنی؛ فقط از یک قدم شروع کن.</span>
+        <a href="#guide">مسیرت را پیدا کن <ArrowLeft size={13} /></a>
       </div>
 
       <header className="site-header">
-        <div className="container nav-wrap">
-          <a className="brand" href="#top" aria-label="تروپیسم، صفحهٔ اول" onClick={(e) => { e.preventDefault(); scrollTo('top'); }}>
-            <img src="/logo.svg" alt="تروپیسم" className="brand-logo" />
-          </a>
-          <nav className={menuOpen ? 'main-nav is-open' : 'main-nav'} aria-label="ناوبری اصلی">
-            <a href="#services" onClick={() => setMenuOpen(false)}>خدمات تراپی</a>
-            <a href="#approach" onClick={() => setMenuOpen(false)}>نگاه تروپیسم</a>
-            <a href="#process" onClick={() => setMenuOpen(false)}>مسیر شروع</a>
-            <a href="#faq" onClick={() => setMenuOpen(false)}>سؤالات پرتکرار</a>
-            <button className="mobile-nav-cta" onClick={() => { setMenuOpen(false); openBooking(); }}>شروع مسیر من <ArrowLeft size={16} /></button>
+        <div className="container nav-inner">
+          <BrandMark />
+          <nav className={'desktop-nav ' + (menuOpen ? 'desktop-nav-open' : '')} aria-label="ناوبری اصلی">
+            {navItems.map(([label, href], i) => (
+              <a key={href} className={i === 0 ? 'nav-link nav-link-active' : 'nav-link'} href={href} onClick={() => setMenuOpen(false)}>
+                {label}
+              </a>
+            ))}
           </nav>
           <div className="nav-actions">
-            <button className="nav-cta" onClick={() => openBooking()}>رزرو جلسه <ArrowLeft size={16} /></button>
-            <button className="menu-toggle" aria-label={menuOpen ? 'بستن منو' : 'باز کردن منو'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            <button className="button button-primary nav-cta" onClick={() => openBooking()}><span>رزرو جلسه</span><ArrowUpLeft size={16} /></button>
+            <button className="icon-button mobile-menu-button" aria-label={menuOpen ? 'بستن منو' : 'باز کردن منو'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <X size={21} /> : <Menu size={21} />}
             </button>
           </div>
         </div>
       </header>
 
-      <section className="hero section-shell">
-        <div className="hero-grain" aria-hidden="true" />
+      <section className="hero-section">
+        <div className="hero-orbit hero-orbit-one" />
+        <div className="hero-orbit hero-orbit-two" />
         <div className="container hero-grid">
-          <motion.div className="hero-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <div className="eyebrow"><span className="eyebrow-mark"><Leaf size={15} /></span> هر تغییری، از یک توجه کوچک شروع می‌شود</div>
-            <h1>به سمت خودت<br /><span className="headline-accent">رشد کن.</span></h1>
-            <p className="hero-lead">تروپیسم فضایی‌ست برای مکث‌کردن، شنیدن خودت و پیدا کردن مسیرت؛ با همراهی درمانگرانی که بدون قضاوت، کنارت هستند.</p>
+          <Reveal className="hero-copy">
+            <div className="eyebrow"><span className="eyebrow-line" /> فضایی برای رشد، با ریتم خودت</div>
+            <h1>قرار نیست<br />همه‌چیز را <span className="headline-highlight">بدانی.</span><br /><em>فقط شروع کن.</em></h1>
+            <p className="hero-description">گاهی یک گفت‌وگو، دریچه‌ای تازه باز می‌کند. اینجا می‌توانی با همراهی متخصصان، خودت را بهتر بشناسی و آرام‌آرام مسیرت را پیدا کنی.</p>
             <div className="hero-actions">
-              <button className="button button-primary" onClick={() => openBooking()}>مسیر تراپی من <ArrowLeft size={18} /></button>
-              <button className="button button-text" onClick={() => scrollTo('approach')}><span className="play-mark"><ArrowUpLeft size={17} /></span> با نگاه تروپیسم آشنا شو</button>
+              <button className="button button-primary button-large" onClick={() => openBooking()}>پیدا کردن همراه من <ArrowLeft size={17} /></button>
+              <a className="text-link" href="#guide"><span className="play-dot"><ArrowUpLeft size={15} /></span> ببین چطور شروع کنیم</a>
             </div>
-            <div className="hero-trust-row">
-              <div className="trust-avatars" aria-hidden="true"><span className="trust-avatar avatar-one">م</span><span className="trust-avatar avatar-two">ر</span><span className="trust-avatar avatar-three">ن</span></div>
-              <div className="trust-caption"><div className="mini-stars">✳ ✳ ✳</div><span>یک قدم کوچک برای توجه به خودت</span></div>
+            <div className="hero-trust">
+              <div className="avatar-stack" aria-hidden="true">
+                <span className="mini-avatar avatar-a">ر</span><span className="mini-avatar avatar-b">م</span><span className="mini-avatar avatar-c">ن</span>
+              </div>
+              <div><strong>قدم‌به‌قدم، کنار تو</strong><span>برای روزهایی که به همراهی نیاز داری</span></div>
+              <span className="trust-leaf"><Leaf size={23} /></span>
             </div>
-          </motion.div>
-
-          <motion.div className="hero-art" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.85, delay: 0.12 }}>
-            <div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" />
-            <div className="art-sun"><span /></div>
-            <div className="art-card-main">
-              <div className="art-card-top"><span>NOTE TO SELF</span><span>۰۱ / ۰۳</span></div>
-              <div className="art-plant" aria-hidden="true"><i className="stem" /><i className="leaf leaf-a" /><i className="leaf leaf-b" /><i className="leaf leaf-c" /><i className="leaf leaf-d" /><i className="leaf leaf-e" /><i className="plant-pot" /></div>
-              <div className="art-card-caption"><span className="caption-kicker">A GENTLE REMINDER</span><strong>به خودت فرصت بده.</strong><p>رشد، مسیر است نه مقصد.</p></div>
-            </div>
-            <div className="floating-note note-top"><span className="note-icon"><HeartHandshake size={18} /></span><span><b>همراهی امن</b><small>در مسیر خودشناسی</small></span></div>
-            <div className="floating-note note-bottom"><span className="note-icon note-icon-purple"><Sparkles size={18} /></span><span><b>شروع از همین‌جا</b><small>با یک قدم کوچک</small></span></div>
-            <div className="art-index">TROPISM / 001</div>
-          </motion.div>
-        </div>
-        <div className="container hero-bottom"><span className="bottom-line" /> <span>فضایی برای رشد، آگاهی و ارتباط</span><span className="scroll-indicator" onClick={() => scrollTo('services')} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && scrollTo('services')}>به پایین برو <ChevronDown size={15} /></span></div>
-      </section>
-
-      <section className="intro-strip">
-        <div className="container intro-strip-inner"><div className="intro-mark"><Leaf size={28} /></div><p>گاهی فقط به فضایی نیاز داریم که در آن، <em>خودمان را دوباره بشنویم.</em></p><span className="intro-side-note">A SPACE TO GROW — AT YOUR OWN PACE</span></div>
-      </section>
-
-      <section className="section-pad services-section" id="services">
-        <div className="container">
-          <div className="heading-split">
-            <div className="section-heading"><div className="eyebrow"><span className="eyebrow-mark"><span>✳</span></span> همراهی متناسب با تو</div><h2>هر مسیر،<br /><span className="headline-accent">از یک نیاز</span> شروع می‌شود.</h2></div>
-            <div className="heading-aside"><p>قرار نیست همه‌چیز را از قبل بدانی. کافی‌ست از جایی شروع کنی که امروز ایستاده‌ای.</p><button className="inline-link" onClick={() => openBooking()}>در انتخاب مسیر کمکم کن <MoveLeft size={16} /></button></div>
+          </Reveal>
+          <div className="hero-art">
+            <motion.div className="hero-image-frame" initial={reduced ? false : { opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: reduced ? 0 : 1.1, ease: [0.22, 1, 0.36, 1] }}>
+              <img className="hero-image" src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1500&q=90" alt="فضایی گرم و آرام با نور طبیعی، گیاهان و صندلی راحت برای مکث و گفت‌وگو" />
+              <div className="image-wash" />
+            </motion.div>
+            <motion.div className="hero-sticker sticker-top" animate={reduced ? undefined : { y: [0, -7, 0], rotate: [0, 1.5, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}>
+              <span className="sticker-icon"><Sprout size={18} /></span><span>جایی برای<br /><b>نفس کشیدن</b></span>
+            </motion.div>
+            <motion.div className="hero-sticker sticker-bottom" animate={reduced ? undefined : { y: [0, 6, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
+              <span className="sticker-check"><Check size={15} /></span><span><b>همراهی بدون قضاوت</b><small>با احترام به مسیر تو</small></span>
+            </motion.div>
+            <div className="hero-number">T / ۰۱</div>
+            <svg className="hero-doodle" viewBox="0 0 160 180" fill="none" aria-hidden="true"><path d="M18 164C73 138 82 89 50 45C40 31 25 27 16 31C31 12 60 11 76 36C95 66 87 110 113 120C131 127 145 113 143 96" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M49 46C22 56 19 77 22 92C43 88 54 70 49 46Z" fill="#6a804a"/><path d="M96 100C94 78 109 65 129 63C132 82 118 99 96 100Z" fill="#9b76b4"/></svg>
+            <span className="hero-caption">گاهی مسیر، با یک مکث روشن می‌شود.</span>
           </div>
-          <div className="service-grid">
+        </div>
+        <div className="hero-bottom container">
+          <span>آرام‌تر، آگاهانه‌تر، نزدیک‌تر به خودت</span>
+          <a href="#services" aria-label="رفتن به بخش خدمات"><span className="scroll-line" /> اسکرول کن</a>
+          <span className="hero-index">۰۱ — ۰۷</span>
+        </div>
+      </section>
+
+      <section className="services-section section-pad" id="services">
+        <div className="container">
+          <Reveal className="section-heading services-heading">
+            <div>
+              <span className="section-kicker">راه‌های همراهی</span>
+              <h2>هر آدمی، <span className="serif-accent">داستان</span> خودش را دارد.</h2>
+            </div>
+            <p>برای هر چیزی که این روزها در ذهنت می‌گذرد، می‌شود یک قدم مناسب پیدا کرد؛ بدون عجله و بدون قضاوت.</p>
+          </Reveal>
+          <div className="services-grid">
             {services.map((service, index) => {
               const Icon = service.icon;
-              return <motion.article key={service.id} className={'service-card tone-' + service.tone} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.45, delay: index * 0.08 }}>
-                <div className="service-card-top"><span className="service-icon"><Icon size={22} strokeWidth={1.5} /></span><span className="service-tag">{service.tag}</span><span className="service-index">۰{index + 1}</span></div>
-                <div className="service-copy"><p className="service-subtitle">{service.subtitle}</p><h3>{service.title}</h3><p>{service.description}</p></div>
-                <button className="service-link" onClick={() => openBooking(service.title)} aria-label={'انتخاب ' + service.title}>بررسی این مسیر <span><ArrowLeft size={17} /></span></button>
-              </motion.article>;
+              return (
+                <Reveal key={service.id} delay={index * 0.07} className="service-reveal">
+                  <button className={'service-card service-' + service.tone} onClick={() => openBooking(service.title)}>
+                    <div className="service-card-top"><span className="service-number">{service.number}</span><span className="service-icon"><Icon size={26} strokeWidth={1.45} /></span></div>
+                    <h3>{service.title}</h3>
+                    <p className="service-subtitle">{service.subtitle}</p>
+                    <p className="service-description">{service.description}</p>
+                    <span className="service-arrow"><ArrowLeft size={17} /></span>
+                    <span className="service-orb" />
+                  </button>
+                </Reveal>
+              );
             })}
           </div>
-          <div className="services-footnote"><span className="footnote-mark">✳</span><span>نمی‌دانی از کدام مسیر شروع کنی؟ این کاملاً طبیعی‌ست.</span><button onClick={() => openBooking()}>راهنمایی‌ام کن <ArrowLeft size={14} /></button></div>
-        </div>
-      </section>
-
-      <section className="section-pad approach-section" id="approach">
-        <div className="container approach-grid">
-          <motion.div className="approach-visual" initial={{ opacity: 0, x: 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.65 }}>
-            <div className="approach-visual-bg" /><div className="approach-ring ring-a" /><div className="approach-ring ring-b" />
-            <div className="approach-center"><span className="center-sprout"><i /><b /><em /></span><span className="center-label">GROW AT<br />YOUR OWN PACE</span></div>
-            <div className="approach-stamp"><Leaf size={23} /><span>آرام<br />و پیوسته</span></div>
-            <span className="approach-caption">A LITTLE SPACE FOR YOURSELF</span>
-          </motion.div>
-          <div className="approach-copy"><div className="eyebrow"><span className="eyebrow-mark"><Leaf size={15} /></span> نگاه تروپیسم</div><h2>قرار نیست<br /><span className="headline-accent">نسخهٔ دیگری</span> از خودت باشی.</h2><p className="approach-lead">ما به رشد به‌عنوان نزدیک‌شدن به خودت نگاه می‌کنیم؛ نه تبدیل‌شدن به کسی که دیگران انتظارش را دارند.</p>
-            <div className="approach-points">{approaches.map((item) => { const Icon = item.icon; return <div className="approach-point" key={item.title}><span className="point-icon"><Icon size={19} /></span><div><strong>{item.title}</strong><p>{item.text}</p></div><Check size={15} className="point-check" /></div>; })}</div>
+          <div className="services-footer">
+            <span><ShieldCheck size={16} /> انتخاب آگاهانه، با خیال راحت</span>
+            <button className="underlined-link" onClick={() => openBooking()}>هنوز نمی‌دونی کدوم مسیر؟ <ArrowLeft size={15} /></button>
           </div>
         </div>
       </section>
 
-      <section className="steps-section section-pad" id="process">
-        <div className="container"><div className="centered-heading"><div className="eyebrow"><span className="eyebrow-mark"><Sparkles size={14} /></span> شروع لازم نیست پیچیده باشد</div><h2>سه قدم برای <span className="headline-accent">شروع مسیرت</span></h2><p>آرام، روشن و با اختیار خودت.</p></div>
-          <div className="steps-grid">
-            <article className="step-card"><span className="step-number">۰۱</span><div className="step-illustration step-one"><MessageCircle size={27} strokeWidth={1.4} /></div><h3>از نیازت بگو</h3><p>ببین این روزها بیشتر به چه نوع همراهی نیاز داری.</p><span className="step-line" /></article>
-            <article className="step-card"><span className="step-number">۰۲</span><div className="step-illustration step-two"><Leaf size={27} strokeWidth={1.4} /></div><h3>مسیر مناسب را پیدا کن</h3><p>با شناخت گزینه‌ها، انتخابت را آگاهانه‌تر انجام بده.</p><span className="step-line" /></article>
-            <article className="step-card"><span className="step-number">۰۳</span><div className="step-illustration step-three"><CalendarDays size={27} strokeWidth={1.4} /></div><h3>برای خودت وقت بگذار</h3><p>زمان مناسب را انتخاب کن و قدم اول را بردار.</p><span className="step-line" /></article>
+      <section className="guide-section section-pad" id="guide">
+        <div className="guide-backdrop-shape" />
+        <div className="container guide-grid">
+          <Reveal className="guide-visual">
+            <div className="guide-photo-main">
+              <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85" alt="گوشه‌ای آرام با صندلی، نور طبیعی و گیاهان سبز" loading="lazy" />
+              <div className="guide-photo-overlay"><span>یک لحظه برای خودت</span><b>نفس عمیق بکش.</b><span className="guide-quote-mark">“</span></div>
+            </div>
+            <div className="guide-note"><span className="note-icon"><Leaf size={22} /></span><p>برای شروع، لازم نیست آماده باشی؛<br /><b>همین که اینجایی کافیه.</b></p></div>
+            <span className="guide-art-number">TRO / ۰۲</span>
+          </Reveal>
+          <Reveal className="guide-copy" delay={0.1}>
+            <span className="section-kicker"><span className="kicker-dot" /> راهنمای شروع</span>
+            <h2>شروع کردن،<br /><span className="serif-accent">پیچیده نیست.</span></h2>
+            <p className="guide-intro">لازم نیست از قبل بدانی چه چیزی می‌خواهی بگویی. قرار است با هم، قدم بعدی را پیدا کنیم.</p>
+            <div className="steps-list">
+              {steps.map((step, index) => (
+                <div className="step-item" key={step.n}>
+                  <div className="step-number">{step.n}</div>
+                  <div className="step-copy"><h3>{step.title}</h3><p>{step.text}</p></div>
+                  <ArrowUpLeft className="step-arrow" size={17} />
+                  {index < steps.length - 1 && <span className="step-connector" />}
+                </div>
+              ))}
+            </div>
+            <button className="button button-outline" onClick={() => openBooking()}>شروع مسیر من <ArrowLeft size={16} /></button>
+            <div className="guide-footnote"><span className="footnote-star">✳</span> با ریتم خودت؛ بدون عجله، با احترام به مسیرت.</div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="journal-section section-pad" id="journal">
+        <div className="container">
+          <Reveal className="section-heading journal-heading">
+            <div><span className="section-kicker">مجله تروپیسم / برای روزهای واقعی</span><h2>چند دقیقه برای <span className="serif-accent">خودت.</span></h2></div>
+            <a className="text-link journal-all" href="#journal-cards">همه نوشته‌ها <ArrowLeft size={16} /></a>
+          </Reveal>
+          <div className="journal-layout" id="journal-cards">
+            <Reveal className="journal-intro-card">
+              <span className="journal-intro-ornament"><Sprout size={35} strokeWidth={1.1} /></span>
+              <span className="section-kicker">خواندنی‌هایی برای مکث</span>
+              <h3>گاهی یک جمله،<br />چیزی را درون ما روشن می‌کند.</h3>
+              <p>یادداشت‌هایی کوتاه و کاربردی درباره خودشناسی، رابطه و مراقبت از ذهن؛ برای آن‌که در شلوغی روز کمی جا برای خودت باز کنی.</p>
+              <div className="journal-progress"><span /><span /><span /></div>
+              <span className="journal-side-label">T / JOURNAL</span>
+            </Reveal>
+            <div className="article-grid">
+              {articles.map((article, index) => (
+                <Reveal key={article.title} delay={index * 0.08} className="article-reveal">
+                  <article className="article-card">
+                    <a href="#newsletter" className="article-image-wrap" aria-label={'خواندن مقاله ' + article.title}>
+                      <img className={article.shape} src={article.image} alt="" loading="lazy" />
+                      <span className="article-category">{article.category}</span>
+                      <span className="article-open"><ArrowUpLeft size={17} /></span>
+                    </a>
+                    <div className="article-body"><span className="article-index">۰{index + ۱} / یادداشت</span><h3>{article.title}</h3><p>{article.excerpt}</p><div className="article-meta"><span><Clock3 size={13} /> {article.time}</span><a href="#newsletter">بیشتر بخوان <ArrowLeft size={14} /></a></div></div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
           </div>
-          <div className="steps-cta"><span>شروع مسیر، از همین حالا می‌تواند آرام‌تر باشد.</span><button className="button button-primary" onClick={() => openBooking()}>شروع مسیر من <ArrowLeft size={17} /></button></div>
         </div>
       </section>
 
-      <section className="quote-section"><div className="container quote-inner"><span className="quote-mark">“</span><p>لازم نیست همین امروز<br /><em>همه‌چیز را حل کنی.</em></p><div className="quote-bottom"><span /> فقط کافی‌ست به خودت توجه کنی <span /></div><div className="quote-orbit" /></div></section>
-
-      <section className="section-pad faq-section" id="faq">
-        <div className="container faq-grid"><div className="faq-intro"><div className="eyebrow"><span className="eyebrow-mark"><MessageCircle size={14} /></span> سؤال‌های تو مهم‌اند</div><h2>شاید این‌ها<br /><span className="headline-accent">همان چیزهایی</span> باشند که می‌پرسی.</h2><p>برای شروع لازم نیست پاسخ همهٔ سؤال‌ها را بدانی؛ اما حق داری با خیال روشن‌تری تصمیم بگیری.</p><button className="inline-link" onClick={() => openBooking()}>سؤال دیگری دارم <ArrowLeft size={16} /></button></div>
-          <div className="faq-list">{faqs.map((faq, index) => <div className={activeFaq === index ? 'faq-item is-active' : 'faq-item'} key={faq.q}><button className="faq-question" aria-expanded={activeFaq === index} onClick={() => setActiveFaq(activeFaq === index ? null : index)}><span className="faq-count">۰{index + 1}</span><span>{faq.q}</span><span className="faq-toggle"><ChevronDown size={17} /></span></button><AnimatePresence initial={false}>{activeFaq === index && <motion.div className="faq-answer-wrap" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.24 }}><p>{faq.a}</p></motion.div>}</AnimatePresence></div>)}</div>
+      <section className="instagram-section" id="instagram">
+        <div className="instagram-blob" />
+        <div className="container instagram-grid">
+          <Reveal className="phone-stage">
+            <div className="phone-halo" />
+            <div className="phone-mockup">
+              <div className="phone-speaker" />
+              <div className="phone-screen">
+                <div className="phone-status"><span>۹:۴۱</span><span>● ◔ ▰</span></div>
+                <div className="phone-profile"><img src="/logo.svg" alt="نشان تروپیسم" /><div><b>tropism.ir</b><span>فضایی برای رشد 🌱</span></div><button aria-label="مشاهده اینستاگرام" onClick={() => window.open('https://instagram.com/tropism.ir', '_blank', 'noopener,noreferrer')}><Instagram size={15} /></button></div>
+                <div className="phone-stats"><span><b>۱۲۴</b> پست</span><span><b>۸.۶k</b> همراه</span><span><b>۳۲</b> راهنما</span></div>
+                <div className="phone-bio">برای حالِ بهتر، از همین‌جا شروع کن.<br />خودشناسی • رابطه • آرامش</div>
+                <button className="phone-follow" type="button" onClick={() => window.open('https://instagram.com/tropism.ir', '_blank', 'noopener,noreferrer')}>مشاهده صفحه</button>
+                <div className="phone-story-row"><i /><i /><i /><i /></div>
+                <div className="phone-photo-grid">
+                  <div className="phone-shot shot-a" /><div className="phone-shot shot-b" /><div className="phone-shot shot-c" /><div className="phone-shot shot-d" /><div className="phone-shot shot-e" /><div className="phone-shot shot-f" />
+                </div>
+              </div>
+            </div>
+            <span className="phone-floating-leaf"><Leaf size={31} /></span>
+            <span className="phone-caption">یک گوشه کوچک<br />برای مکث روزانه‌ات.</span>
+          </Reveal>
+          <Reveal className="instagram-copy" delay={0.12}>
+            <span className="section-kicker">بیرون از این صفحه هم کنار توییم</span>
+            <h2>با ما در <span className="serif-accent">اینستاگرام</span><br />نزدیک‌تر باش.</h2>
+            <p>یادداشت‌های کوتاه، تمرین‌های کوچک و حرف‌هایی درباره زندگی واقعی؛ برای وقت‌هایی که چند دقیقه همراهی می‌تواند حال روزت را کمی عوض کند.</p>
+            <a className="button button-dark" href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer"><Instagram size={17} /> @tropism.ir <ArrowUpLeft size={16} /></a>
+            <div className="instagram-gallery">
+              <a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" aria-label="اینستاگرام تروپیسم"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=360&q=80" alt="" loading="lazy" /></a>
+              <a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" aria-label="اینستاگرام تروپیسم"><img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=360&q=80" alt="" loading="lazy" /></a>
+              <a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" aria-label="اینستاگرام تروپیسم"><img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=360&q=80" alt="" loading="lazy" /></a>
+              <a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" aria-label="اینستاگرام تروپیسم"><img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=360&q=80" alt="" loading="lazy" /></a>
+            </div>
+            <div className="insta-signature"><span className="insta-line" /><span>هر روز، یک قدم نزدیک‌تر به خودت</span><span className="insta-flower">✳</span></div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="final-cta"><div className="container final-cta-inner"><div className="final-ornament"><div className="final-orbit" /><Leaf size={35} strokeWidth={1.2} /><span>GROW<br />TOWARD YOU</span></div><div className="final-copy"><div className="eyebrow"><span className="eyebrow-mark"><Sparkles size={14} /></span> همین‌جا، همین‌قدر کافی‌ست</div><h2>یک قدم کوچک،<br /><span>برای خودت.</span></h2><p>هر وقت آماده بودی، ما اینجاییم تا شروع مسیر را برایت ساده‌تر کنیم.</p><button className="button button-light" onClick={() => openBooking()}>رزرو جلسه <ArrowLeft size={18} /></button></div><span className="final-side-label">A SPACE TO GROW / TROPISM</span></div></section>
+      <section className="about-section section-pad" id="about">
+        <div className="about-topography" />
+        <div className="container about-grid">
+          <Reveal className="about-visual">
+            <div className="about-image"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85" alt="فضایی روشن و پر از گیاه برای رشد و گفت‌وگو" loading="lazy" /></div>
+            <div className="about-stamp"><img src="/logo.svg" alt="" /><span>SPACE<br />TO GROW</span></div>
+            <svg className="about-line-doodle" viewBox="0 0 240 120" fill="none" aria-hidden="true"><path d="M2 90C44 22 72 25 112 65S171 115 210 48 237 22 238 16" stroke="#6a804a" strokeWidth="1.3" strokeLinecap="round"/><path d="M111 65C106 43 122 28 139 31 139 50 128 64 111 65Z" fill="#9b76b4"/></svg>
+            <span className="about-image-caption">رشد، یک مسیر است؛ نه یک مقصد.</span>
+          </Reveal>
+          <Reveal className="about-copy" delay={0.12}>
+            <span className="section-kicker">درباره تروپیسم</span>
+            <h2>اینجا قرار نیست<br />نسخه‌ای از کسی دیگر باشی؛<br /><span className="serif-accent">قرار است خودت را پیدا کنی.</span></h2>
+            <p>تروپیسم از یک باور ساده شروع شده: هر آدمی شایسته فضایی امن برای شناختن خودش است. ما می‌خواهیم مسیر پیدا کردن همراه حرفه‌ای، از اولین جست‌وجو تا شروع گفت‌وگو، روشن‌تر، انسانی‌تر و نزدیک‌تر به نیاز واقعی تو باشد.</p>
+            <p>نه وعده تغییر یک‌شبه می‌دهیم، نه برای احساساتت نسخه آماده داریم؛ فقط کمک می‌کنیم قدم بعدی را آگاهانه‌تر برداری.</p>
+            <div className="about-values"><span><i><Leaf size={17} /></i> احترام به تفاوت‌ها</span><span><i><ShieldCheck size={17} /></i> امنیت و محرمانگی</span><span><i><HeartHandshake size={17} /></i> همراهی انسانی</span></div>
+            <button className="button button-outline" onClick={() => openBooking()}>بیا از همین‌جا شروع کنیم <ArrowLeft size={16} /></button>
+          </Reveal>
+        </div>
+        <div className="container about-bottom">
+          <div className="about-stat"><strong>۰۱</strong><span>تو، نقطه شروع این مسیری</span></div>
+          <div className="about-stat"><strong>آرام</strong><span>به اندازه‌ای که نیاز داری</span></div>
+          <div className="about-stat"><strong>واقعی</strong><span>بدون قضاوت و شعار</span></div>
+          <div className="about-bottom-note">هر رشد کوچکی، ارزش جشن گرفتن دارد. <span>✳</span></div>
+        </div>
+      </section>
 
-      <footer className="site-footer"><div className="container footer-main"><div className="footer-brand-col"><img src="/logo.svg" alt="تروپیسم" className="footer-brand" /><p>فضایی برای مکث‌کردن، شنیدن خودت و پیدا کردن مسیرت.</p><span className="footer-motto"><Leaf size={14} /> رشد، به سبک خودت</span></div><div className="footer-links-col"><h4>دسترسی سریع</h4><a href="#services">خدمات تراپی</a><a href="#approach">نگاه تروپیسم</a><a href="#process">مسیر شروع</a><a href="#faq">سؤالات پرتکرار</a></div><div className="footer-links-col"><h4>شروع ارتباط</h4><button onClick={() => openBooking()}>درخواست جلسه</button><a href="mailto:hello@tropism.example">hello@tropism.example</a><span>شنبه تا پنج‌شنبه · با هماهنگی قبلی</span></div><div className="footer-note-col"><span className="footer-note-mark">✳</span><p>به خودت<br />فرصت بده.</p><span>TAKE YOUR TIME.</span></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} تروپیسم — تمامی حقوق محفوظ است.</span><span>ساخته‌شده با توجه به جزئیات و احترام به مسیر تو.</span><a href="#top">بازگشت به بالا ↑</a></div></footer>
+      <section className="faq-section section-pad">
+        <div className="container faq-grid">
+          <Reveal className="faq-heading">
+            <span className="section-kicker">چند پرسش رایج</span><h2>شاید تو هم<br /><span className="serif-accent">این را بپرسی.</span></h2><p>اگر جواب سوالت را اینجا پیدا نکردی، برایمان بنویس. با هم روشنش می‌کنیم.</p>
+            <a href="mailto:hello@tropism.example" className="text-link">ارتباط با تروپیسم <ArrowLeft size={15} /></a>
+          </Reveal>
+          <Reveal className="faq-list" delay={0.1}>
+            {faqs.map((faq, index) => (
+              <div className={'faq-item ' + (openFaq === index ? 'faq-item-open' : '')} key={faq.q}>
+                <button className="faq-question" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}><span><small>۰{index + ۱}</small>{faq.q}</span><i>{openFaq === index ? <Minus size={17} /> : <Plus size={17} />}</i></button>
+                <AnimatePresence initial={false}>
+                  {openFaq === index && <motion.div className="faq-answer" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reduced ? 0 : 0.28 }}><p>{faq.a}</p></motion.div>}
+                </AnimatePresence>
+              </div>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="closing-cta" id="newsletter">
+        <div className="closing-orb closing-orb-one" /><div className="closing-orb closing-orb-two" />
+        <div className="container closing-inner">
+          <div className="closing-mark"><Sprout size={27} strokeWidth={1.3} /></div>
+          <span className="section-kicker">یک قدم کافی‌ست</span>
+          <h2>برای حالِ بهتر،<br /><em>از همین‌جا شروع کن.</em></h2>
+          <p>قرار نیست همه جواب‌ها را همین امروز پیدا کنی.</p>
+          <button className="button button-light" onClick={() => openBooking()}>رزرو جلسه مشاوره <ArrowLeft size={17} /></button>
+          <span className="closing-foot">با خودت مهربان‌تر باش. باقی مسیر را قدم‌به‌قدم می‌رویم.</span>
+        </div>
+      </section>
+
+      <footer className="site-footer">
+        <div className="container footer-main">
+          <div className="footer-brand-col"><BrandMark light /><p>فضایی امن برای شناختن خودت،<br />فهمیدن رابطه‌ها و رشد کردن.</p><div className="footer-socials"><a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" aria-label="اینستاگرام"><Instagram size={17} /></a><a href="mailto:hello@tropism.example" aria-label="ایمیل"><MessageCircle size={17} /></a><a href="#home" aria-label="بازگشت به بالا"><ArrowUpLeft size={17} /></a></div></div>
+          <div className="footer-nav-col"><span className="footer-heading">گشت‌وگذار</span>{navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}</div>
+          <div className="footer-nav-col"><span className="footer-heading">راه‌های همراهی</span>{services.slice(0, 4).map((service) => <button key={service.id} onClick={() => openBooking(service.title)}>{service.title}</button>)}</div>
+          <div className="footer-contact-col"><span className="footer-heading">از ما بپرس</span><p>برای شروع، پرسیدن یا فقط روشن شدن یک ابهام؛ اینجا هستیم.</p><a href="mailto:hello@tropism.example" className="footer-email">hello@tropism.example <ArrowUpLeft size={15} /></a><a href="https://instagram.com/tropism.ir" target="_blank" rel="noreferrer" className="footer-insta">@tropism.ir <Instagram size={15} /></a></div>
+        </div>
+        <div className="container footer-bottom"><span>© تروپیسم — همراه تو در مسیر رشد</span><span>با احترام به مسیر منحصربه‌فرد هر آدم <Leaf size={13} /></span><a href="#home">برگشتن به بالا ↑</a></div>
+      </footer>
 
       <AnimatePresence>
-        {bookingOpen && <motion.div className="booking-overlay" role="presentation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => { if (e.target === e.currentTarget) setBookingOpen(false); }}>
-          <motion.section className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" initial={{ opacity: 0, y: 18, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12 }} transition={{ duration: 0.22 }}>
-            <button className="modal-close" aria-label="بستن" onClick={() => setBookingOpen(false)}><X size={20} /></button>
-            {!submitted ? <>
-              <div className="modal-kicker"><Sparkles size={15} /> قدم اول، با انتخاب تو</div><h2 id="booking-title">مسیرت از کجا شروع می‌شود؟</h2><p className="modal-description">نوع همراهی‌ای را که به آن فکر می‌کنی انتخاب کن. این فرم در حال حاضر نمایشی است.</p>
-              <div className="booking-options">{services.map((service) => <button key={service.id} className={selectedService === service.title ? 'booking-option selected' : 'booking-option'} onClick={() => setSelectedService(service.title)}><span>{service.title}</span><span className="option-check">{selectedService === service.title && <Check size={13} />}</span></button>)}</div>
-              <div className="modal-info-row"><span><Clock3 size={15} /> زمان را بعداً انتخاب می‌کنی</span><span><Video size={15} /> آنلاین یا حضوری</span></div>
-              <button className="button button-primary modal-submit" onClick={() => setSubmitted(true)}>ادامهٔ مسیر <ArrowLeft size={17} /></button>
-              <p className="modal-disclaimer">با ادامه، هنوز رزرو واقعی یا ثبت اطلاعاتی انجام نمی‌شود.</p>
-            </> : <div className="booking-success"><span className="success-mark"><Check size={25} /></span><h2>شروع خوبی‌ست.</h2><p>انتخاب تو: <strong>{selectedService}</strong></p><p>این نمونهٔ اولیه هنوز به سامانهٔ رزرو متصل نیست. برای فعال‌شدن این مرحله باید سرویس رزرو واقعی به سایت اضافه شود.</p><button className="button button-primary modal-submit" onClick={() => setBookingOpen(false)}>متوجه شدم <ArrowLeft size={17} /></button></div>}
-          </motion.section>
-        </motion.div>}
+        {bookingOpen && (
+          <motion.div className="booking-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => { if (event.target === event.currentTarget) setBookingOpen(false); }}>
+            <motion.div className="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" initial={reduced ? false : { opacity: 0, y: 22, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: reduced ? 0 : 0.28 }}>
+              <button className="booking-close icon-button" onClick={() => setBookingOpen(false)} aria-label="بستن پنجره"><X size={20} /></button>
+              {!bookingSent ? <>
+                <div className="booking-symbol"><Sprout size={26} /></div><span className="section-kicker">اولین قدم تو</span><h2 id="booking-title">از کجا شروع کنیم؟</h2><p className="booking-intro">نوع همراهی را انتخاب کن و راه ارتباطی‌ات را بگذار تا مسیر بعدی مشخص شود.</p>
+                <form onSubmit={handleBooking} className="booking-form">
+                  <label htmlFor="service-select">چه نوع همراهی‌ای می‌خواهی؟</label><div className="select-wrap"><select id="service-select" value={selectedService} onChange={(e) => setSelectedService(e.target.value)}>{services.map((service) => <option key={service.id}>{service.title}</option>)}</select><ChevronDown size={17} /></div>
+                  <label htmlFor="contact-name">اسمت را چطور صدا کنیم؟</label><input id="contact-name" name="name" placeholder="نام کوچک" required />
+                  <label htmlFor="contact-way">راه ارتباطی تو</label><input id="contact-way" name="contact" placeholder="شماره تماس یا ایمیل" required />
+                  <button className="button button-primary button-full" type="submit">ادامه مسیر <ArrowLeft size={16} /></button>
+                  <p className="booking-disclaimer"><ShieldCheck size={14} /> این فرم در حال حاضر نمایشی است و اطلاعات جایی ارسال نمی‌شود.</p>
+                </form>
+              </> : <div className="booking-success"><span className="success-mark"><Check size={26} /></span><span className="section-kicker">قدم اول برداشته شد</span><h2 id="booking-title">ممنون که شروع کردی.</h2><p>این فرم در نسخه فعلی نمایشی است؛ برای فعال شدن رزرو واقعی باید به سامانه نوبت‌دهی و مسیر امن نگهداری اطلاعات متصل شود.</p><button className="button button-primary button-full" onClick={() => setBookingOpen(false)}>متوجه شدم <Check size={16} /></button></div>}
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </main>
   );
