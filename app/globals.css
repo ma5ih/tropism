@@ -6,6 +6,7 @@
   --green-dark: #35452f;
   --green-soft: #a9b795;
   --lilac: #9b76b4;
+  --gray: #dbdbdb;
   --lilac-light: #e9dcef;
   --peach: #ead3bd;
   --paper: #f8f7f2;
@@ -13,7 +14,7 @@
   --white: #fffefa;
   --ink: #2e372f;
   --muted: #73796c;
-  --line: #e1e3d8;
+  --line: var(--gray);
   --container: 1200px;
   --radius: 22px;
   --shadow: 0 20px 55px rgba(48, 59, 43, .09);
