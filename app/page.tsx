@@ -3,9 +3,9 @@
 import { useState, type FormEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
-  ArrowLeft, ArrowUpLeft, Baby, Brain, CalendarDays, Check, ChevronDown,
+  ArrowLeft, ArrowUpLeft, Baby, Brain, Check, ChevronDown,
   Clock3, Flower2, HeartHandshake, Instagram, Leaf, Menu, MessageCircle,
-  Minus, Plus, ShieldCheck, Sparkles, Sprout, UsersRound, Video, X
+  Minus, Plus, ShieldCheck, Sparkles, Sprout, UsersRound, X
 } from 'lucide-react';
 
 const services = [
