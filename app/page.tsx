@@ -233,7 +233,7 @@ export default function HomePage() {
                       <span className="article-category">{article.category}</span>
                       <span className="article-open"><ArrowUpLeft size={17} /></span>
                     </a>
-                    <div className="article-body"><span className="article-index">۰{index + ۱} / یادداشت</span><h3>{article.title}</h3><p>{article.excerpt}</p><div className="article-meta"><span><Clock3 size={13} /> {article.time}</span><a href="#journal">بیشتر بخوان <ArrowLeft size={14} /></a></div></div>
+                    <div className="article-body"><span className="article-index">۰{index + 1} / یادداشت</span><h3>{article.title}</h3><p>{article.excerpt}</p><div className="article-meta"><span><Clock3 size={13} /> {article.time}</span><a href="#journal">بیشتر بخوان <ArrowLeft size={14} /></a></div></div>
                   </article>
                 </Reveal>
               ))}
