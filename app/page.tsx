@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft, ArrowUpLeft, Baby, Brain, Check, ChevronDown,
   Clock3, Flower2, HeartHandshake, Instagram, Leaf, Menu, MessageCircle,
-  Minus, Plus, ShieldCheck, Sparkles, Sprout, UsersRound, X
+  ShieldCheck, Sparkles, Sprout, UsersRound, X
 } from 'lucide-react';
 
 const services = [
@@ -29,9 +29,6 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'اگر ندانم به چه نوع مشاوره‌ای نیاز دارم چه؟', a: 'کاملاً طبیعی است. از راهنمای انتخاب شروع کن یا برای آشنایی اولیه با ما در ارتباط باش؛ قرار نیست پیش از شروع، همه جواب‌ها را داشته باشی.' },
-  { q: 'جلسه‌ها آنلاین برگزار می‌شوند؟', a: 'در این طرح، امکان نمایش جلسه‌های آنلاین و حضوری در نظر گرفته شده است. شیوه و زمان واقعی هر جلسه باید هنگام اتصال سامانه رزرو توسط تیم تروپیسم نهایی شود.' },
-  { q: 'چطور از محرمانه بودن اطلاعاتم مطمئن شوم؟', a: 'حریم خصوصی یکی از اصول اساسی همراهی درمانی است. پیش از انتشار نسخه نهایی، سیاست محرمانگی و روش نگهداری داده‌ها باید به‌طور روشن در سایت درج شود.' },
 ];
 
 function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
@@ -62,7 +59,6 @@ export default function HomePage() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingSent, setBookingSent] = useState(false);
   const [selectedService, setSelectedService] = useState('تراپی فردی');
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const reduced = useReducedMotion();
 
   const openBooking = (service?: string) => {
@@ -235,12 +231,12 @@ export default function HomePage() {
               {articles.map((article, index) => (
                 <Reveal key={article.title} delay={index * 0.08} className="article-reveal">
                   <article className="article-card">
-                    <a href="#newsletter" className="article-image-wrap" aria-label={'خواندن مقاله ' + article.title}>
+                    <a href="#journal" className="article-image-wrap" aria-label={'خواندن مقاله ' + article.title}>
                       <img className={article.shape} src={article.image} alt="" loading="lazy" />
                       <span className="article-category">{article.category}</span>
                       <span className="article-open"><ArrowUpLeft size={17} /></span>
                     </a>
-                    <div className="article-body"><span className="article-index">۰{index + ۱} / یادداشت</span><h3>{article.title}</h3><p>{article.excerpt}</p><div className="article-meta"><span><Clock3 size={13} /> {article.time}</span><a href="#newsletter">بیشتر بخوان <ArrowLeft size={14} /></a></div></div>
+                    <div className="article-body"><span className="article-index">۰{index + ۱} / یادداشت</span><h3>{article.title}</h3><p>{article.excerpt}</p><div className="article-meta"><span><Clock3 size={13} /> {article.time}</span><a href="#journal">بیشتر بخوان <ArrowLeft size={14} /></a></div></div>
                   </article>
                 </Reveal>
               ))}
@@ -310,37 +306,6 @@ export default function HomePage() {
           <div className="about-stat"><strong>آرام</strong><span>به اندازه‌ای که نیاز داری</span></div>
           <div className="about-stat"><strong>واقعی</strong><span>بدون قضاوت و شعار</span></div>
           <div className="about-bottom-note">هر رشد کوچکی، ارزش جشن گرفتن دارد. <span>✳</span></div>
-        </div>
-      </section>
-
-      <section className="faq-section section-pad">
-        <div className="container faq-grid">
-          <Reveal className="faq-heading">
-            <span className="section-kicker">چند پرسش رایج</span><h2>شاید تو هم<br /><span className="serif-accent">این را بپرسی.</span></h2><p>اگر جواب سوالت را اینجا پیدا نکردی، برایمان بنویس. با هم روشنش می‌کنیم.</p>
-            <a href="mailto:hello@tropism.example" className="text-link">ارتباط با تروپیسم <ArrowLeft size={15} /></a>
-          </Reveal>
-          <Reveal className="faq-list" delay={0.1}>
-            {faqs.map((faq, index) => (
-              <div className={'faq-item ' + (openFaq === index ? 'faq-item-open' : '')} key={faq.q}>
-                <button className="faq-question" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}><span><small>۰{index + ۱}</small>{faq.q}</span><i>{openFaq === index ? <Minus size={17} /> : <Plus size={17} />}</i></button>
-                <AnimatePresence initial={false}>
-                  {openFaq === index && <motion.div className="faq-answer" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reduced ? 0 : 0.28 }}><p>{faq.a}</p></motion.div>}
-                </AnimatePresence>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="closing-cta" id="newsletter">
-        <div className="closing-orb closing-orb-one" /><div className="closing-orb closing-orb-two" />
-        <div className="container closing-inner">
-          <div className="closing-mark"><Sprout size={27} strokeWidth={1.3} /></div>
-          <span className="section-kicker">یک قدم کافی‌ست</span>
-          <h2>برای حالِ بهتر،<br /><em>از همین‌جا شروع کن.</em></h2>
-          <p>قرار نیست همه جواب‌ها را همین امروز پیدا کنی.</p>
-          <button className="button button-light" onClick={() => openBooking()}>رزرو جلسه مشاوره <ArrowLeft size={17} /></button>
-          <span className="closing-foot">با خودت مهربان‌تر باش. باقی مسیر را قدم‌به‌قدم می‌رویم.</span>
         </div>
       </section>
 
