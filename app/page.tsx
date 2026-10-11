@@ -28,9 +28,6 @@ const steps = [
   { n: '۳', title: 'زمانت را انتخاب کن', text: 'جزئیات جلسه را مرور کن و برای اولین قدم، زمانی متناسب با زندگی‌ات بردار.' },
 ];
 
-const faqs = [
-];
-
 function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const reduced = useReducedMotion();
   return (
