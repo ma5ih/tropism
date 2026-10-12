@@ -1,4 +1,3 @@
-"use client";
 import type { Metadata, Viewport } from "next";
 import "@fontsource/vazirmatn/400.css";
 import "@fontsource/vazirmatn/500.css";
