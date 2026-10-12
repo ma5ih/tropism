@@ -462,7 +462,7 @@ body {
   border: 0;
   border-radius: 3px;
   color: #fff;
-  background: rgba(106,128,74,.68);
+  background: rgba(106,128,74,.58);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -477,7 +477,7 @@ body {
   border: 0;
   border-radius: 3px;
   color: #fff;
-  background: rgba(106,128,74,.68);
+  background: rgba(106,128,74,.58);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -571,7 +571,7 @@ body {
 .service-card--lilac .service-card__icon,
 .service-card--mauve .service-card__icon {
   color: #fff;
-  background: rgba(155,118,180,.72);
+  background: rgba(155,118,180,.58);
 }
 .service-card__reveal {
   top: 72px;
@@ -598,16 +598,16 @@ body {
   min-height: 58%;
   padding: 24px 21px 21px;
   color: #fff;
-  background: rgba(70,90,53,.69);
+  background: rgba(70,90,53,.58);
   transition: background 260ms ease;
 }
-.service-card--lilac .service-card__body { background: rgba(126,89,151,.70); }
-.service-card--sand .service-card__body { background: rgba(116,101,69,.71); }
-.service-card--mauve .service-card__body { background: rgba(126,77,101,.70); }
-.service-card:hover .service-card__body { background: rgba(48,62,42,.82); }
-.service-card--lilac:hover .service-card__body { background: rgba(91,61,111,.84); }
-.service-card--sand:hover .service-card__body { background: rgba(86,73,45,.84); }
-.service-card--mauve:hover .service-card__body { background: rgba(99,54,77,.84); }
+.service-card--lilac .service-card__body { background: rgba(126,89,151,.58); }
+.service-card--sand .service-card__body { background: rgba(116,101,69,.59); }
+.service-card--mauve .service-card__body { background: rgba(126,77,101,.58); }
+.service-card:hover .service-card__body { background: rgba(48,62,42,.70); }
+.service-card--lilac:hover .service-card__body { background: rgba(91,61,111,.72); }
+.service-card--sand:hover .service-card__body { background: rgba(86,73,45,.72); }
+.service-card--mauve:hover .service-card__body { background: rgba(99,54,77,.72); }
 .service-card__body h3 { margin-bottom: 9px; color: #fff; font-size: 15px; }
 .service-card__body p { min-height: 52px; color: rgba(255,255,255,.9); font-size: 11.5px; }
 .service-card__link {
@@ -650,7 +650,7 @@ body {
   border: 0;
   border-radius: 2px;
   color: #fff;
-  background: rgba(155,118,180,.72);
+  background: rgba(155,118,180,.58);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -729,13 +729,13 @@ body {
   min-height: 78%;
   padding: 26px 25px 24px;
   color: #fff;
-  background: rgba(70,90,53,.72);
+  background: rgba(70,90,53,.58);
 }
 .article-feature .article-tag,
 .article-small .article-tag {
   border-radius: 2px;
   color: #fff;
-  background: rgba(155,118,180,.72);
+  background: rgba(155,118,180,.58);
 }
 .article-feature .article-content h3 { color: #fff; font-size: 19px; }
 .article-feature .article-content h3 a:hover { color: #efe1f5; }
@@ -794,12 +794,12 @@ body {
   justify-content: center;
   padding: 12px 15px;
   color: #fff;
-  background: rgba(126,89,151,.76);
+  background: rgba(126,89,151,.58);
   transition: background 250ms ease;
 }
-.article-small:nth-child(2) .article-content { background: rgba(70,90,53,.76); }
-.article-small:nth-child(3) .article-content { background: rgba(126,77,101,.76); }
-.article-small:hover .article-content { background: rgba(48,62,42,.86); }
+.article-small:nth-child(2) .article-content { background: rgba(70,90,53,.58); }
+.article-small:nth-child(3) .article-content { background: rgba(126,77,101,.58); }
+.article-small:hover .article-content { background: rgba(48,62,42,.70); }
 .article-small .article-content h3 { color: #fff; }
 .article-small .article-content h3 a:hover { color: #f1e5f7; }
 .article-small .article-content p { color: rgba(255,255,255,.85); }
@@ -853,13 +853,13 @@ body {
   padding: 7px 10px;
   border-radius: 2px;
   color: #fff;
-  background: rgba(48,62,42,.64);
+  background: rgba(48,62,42,.58);
 }
 .social-tile__arrow {
   border: 0;
   border-radius: 2px;
   color: #fff;
-  background: rgba(155,118,180,.72);
+  background: rgba(155,118,180,.58);
 }
 .social-tile:hover .social-tile__arrow { color: #fff; background: var(--olive-dark); }
 .social-gallery__footer { color: #50594a; }
@@ -914,7 +914,7 @@ body {
 .closing-strip__icon {
   border-radius: 3px;
   color: #fff;
-  background: rgba(155,118,180,.72);
+  background: rgba(155,118,180,.58);
 }
 .closing-strip p { color: var(--olive-deep); }
 .site-footer { background: #303e2a; }
